@@ -5,3 +5,7 @@ version = 3
 [[package]]
 name = "guessing_game"
 version = "0.1.0"
+
+[[package]]
+name = "trait_vec"
+version = "0.1.0"

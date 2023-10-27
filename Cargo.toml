@@ -1,6 +1,8 @@
 [workspace]
+resolver = "2"
 
 members =  [
   "guessing_game",
-  "trait_vec"
+  "trait_vec",
+  "comfy_experiment"
 ]

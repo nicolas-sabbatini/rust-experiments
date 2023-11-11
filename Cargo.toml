@@ -1,8 +1,10 @@
 [workspace]
 resolver = "2"
 
-members =  [
+members = [
   "guessing_game",
   "trait_vec",
-  "comfy_experiment"
+  "comfy_experiment",
+  "command_pattern",
+  "command_pattern_functional",
 ]

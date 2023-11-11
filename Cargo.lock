@@ -513,6 +513,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "command_pattern"
+version = "0.1.0"
+
+[[package]]
+name = "command_pattern_functional"
+version = "0.1.0"
+
+[[package]]
 name = "console_error_panic_hook"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"

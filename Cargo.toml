@@ -7,4 +7,5 @@ members = [
   "comfy_experiment",
   "command_pattern",
   "command_pattern_functional",
+  "flyweight_pattern",
 ]

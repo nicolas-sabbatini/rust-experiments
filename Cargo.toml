@@ -8,4 +8,5 @@ members = [
   "command_pattern",
   "command_pattern_functional",
   "flyweight_pattern",
+  "observers_pattern",
 ]

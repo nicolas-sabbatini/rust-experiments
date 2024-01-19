@@ -1705,6 +1705,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "observers_pattern"
+version = "0.1.0"
+dependencies = [
+ "rand",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

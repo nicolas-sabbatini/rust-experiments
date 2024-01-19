@@ -3,7 +3,8 @@ use std::{
     ops::{Add, Mul},
 };
 
-#[derive(Default, Debug)]
+// A Vector 2D with generic type T
+#[derive(Default, Debug, Clone, Copy)]
 struct Vec2<T>
 where
     T: Default + Debug,
@@ -51,7 +52,7 @@ where
 
 trait ToVec2<T>
 where
-    T: Default + Debug + Add,
+    T: Default + Debug,
 {
     fn to_vec2(&self) -> Vec2<T>;
 }
@@ -63,6 +64,7 @@ impl ToVec2<usize> for usize {
 }
 
 fn main() {
+    println!("Testing Vec2<T> with T: String");
     let vec_str = Vec2 {
         x: "Holi!",
         y: "Chau!",
@@ -70,19 +72,23 @@ fn main() {
     println!("{vec_str:?}");
     println!("{vec_str}\n");
 
+    println!("Testing Default Vec2<T> with T: usize");
     let vec1: Vec2<usize> = Vec2::default();
     println!("{vec1:?}");
     println!("{vec1}\n");
 
+    println!("Testing ToVec2 trait with usize");
     let vec2 = 10.to_vec2();
     println!("{vec2:?}");
     println!("{vec2}\n");
 
+    println!("Testing Add trait with Vec2<T> where T: Add");
     let vec_sum = vec1 + vec2;
-    println!("{vec_sum:?}");
-    println!("{vec_sum}\n");
+    println!("{vec1:?} + {vec2:?} = {vec_sum:?}");
+    println!("{vec1} + {vec2} = {vec_sum}\n");
 
+    println!("Testing Mul trait with Vec2<T> where T: Mul");
     let vec_mul = vec_sum * 2;
-    println!("{vec_mul:?}");
-    println!("{vec_mul}\n");
+    println!("{vec_sum:?} * 2 = {vec_mul:?}");
+    println!("{vec_sum} * 2 = {vec_mul}\n");
 }

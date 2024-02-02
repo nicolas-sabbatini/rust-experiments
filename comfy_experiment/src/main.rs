@@ -9,7 +9,7 @@ use std::str;
 
 // load JSON slice
 #[derive(Debug, Deserialize)]
-pub struct SlicesConf {
+struct SlicesConf {
     slices: u32,
     width: u32,
     height: u32,
@@ -17,12 +17,12 @@ pub struct SlicesConf {
 
 // Game config
 #[derive(Debug)]
-pub struct GameData {
+struct GameData {
     sprite_size: Option<Size>,
 }
 
 #[derive(Debug)]
-pub struct Player {
+struct Player {
     position: Vec2,
     velocity: f32,
     score: u32,
@@ -76,15 +76,16 @@ impl Player {
     }
 }
 
-pub struct GameState {
-    pub slices: SlicesConf,
-    pub data: GameData,
-    pub player: Player,
+struct GameState {
+    slices: SlicesConf,
+    data: GameData,
+    player: Player,
+    first_run: bool,
 }
 
-impl GameState {
-    pub fn new(_c: &mut EngineContext) -> Self {
-        Self {
+impl GameLoop for GameState {
+    fn new(c: &mut EngineState) -> Self {
+        let mut state = Self {
             slices: SlicesConf {
                 slices: 0,
                 width: 0,
@@ -97,73 +98,50 @@ impl GameState {
                 score: 0,
                 angle: 0.0,
             },
+            first_run: true,
+        };
+        state.slices = serde_json::from_str(
+            str::from_utf8(include_bytes!("../asssets/slices.json"))
+                .expect("Unable to read JSON bytes"),
+        )
+        .expect("Unable to parse JSON");
+        let height = state.slices.height as f32;
+        let width = state.slices.width as f32;
+        state.data.sprite_size = Some(Size::world(1.0, height / width));
+        state
+    }
+
+    fn update(&mut self, c: &mut EngineContext) {
+        if self.first_run {
+            c.load_texture_from_bytes("car", include_bytes!("../asssets/slices.png"));
+            self.first_run = false;
         }
+
+        clear_background(WHITE);
+
+        if is_key_pressed(KeyCode::R) {
+            self.player.reset();
+        }
+        if is_key_down(KeyCode::W) {
+            self.player.move_forward();
+        }
+        if is_key_down(KeyCode::S) {
+            self.player.move_backward();
+        }
+        if is_key_down(KeyCode::A) {
+            self.player.rotate_left();
+        }
+        if is_key_down(KeyCode::D) {
+            self.player.rotate_right();
+        }
+
+        self.player.render(
+            self.slices.slices,
+            self.slices.width as i32,
+            self.slices.height as i32,
+            self.data.sprite_size,
+        );
     }
 }
 
-pub struct GameContext<'a, 'b: 'a> {
-    pub game_state: &'a mut GameState,
-    pub engine: &'a mut EngineContext<'b>,
-}
-
-fn make_context<'a, 'b: 'a>(
-    state: &'a mut GameState,
-    engine: &'a mut EngineContext<'b>,
-) -> GameContext<'a, 'b> {
-    GameContext {
-        game_state: state,
-        engine,
-    }
-}
-
-comfy_game!(
-    "This is a test",
-    GameContext,
-    GameState,
-    make_context,
-    setup,
-    update
-);
-
-fn setup(c: &mut GameContext) {
-    // Load
-    c.engine
-        .load_texture_from_bytes("car", include_bytes!("../asssets/slices.png"));
-    c.game_state.slices = serde_json::from_str(
-        str::from_utf8(include_bytes!("../asssets/slices.json"))
-            .expect("Unable to read JSON bytes"),
-    )
-    .expect("Unable to parse JSON");
-
-    let height = c.game_state.slices.height as f32;
-    let width = c.game_state.slices.width as f32;
-
-    c.game_state.data.sprite_size = Some(Size::world(1.0, height / width));
-}
-
-fn update(c: &mut GameContext) {
-    clear_background(WHITE);
-
-    if is_key_pressed(KeyCode::R) {
-        c.game_state.player.reset();
-    }
-    if is_key_down(KeyCode::W) {
-        c.game_state.player.move_forward();
-    }
-    if is_key_down(KeyCode::S) {
-        c.game_state.player.move_backward();
-    }
-    if is_key_down(KeyCode::A) {
-        c.game_state.player.rotate_left();
-    }
-    if is_key_down(KeyCode::D) {
-        c.game_state.player.rotate_right();
-    }
-
-    c.game_state.player.render(
-        c.game_state.slices.slices,
-        c.game_state.slices.width as i32,
-        c.game_state.slices.height as i32,
-        c.game_state.data.sprite_size,
-    );
-}
+comfy_game!("This is a test", GameState);
